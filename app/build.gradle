@@ -51,8 +51,25 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     // Dagger/DI
     def dagger_version = "2.16"
+    api "com.google.dagger:dagger:$dagger_version"
+    api "com.google.dagger:dagger-android-support:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    api "androidx.core:core-ktx:+"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+// Retrofit/Gson
+    api 'com.google.code.gson:gson:2.8.5'
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+    api 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    api 'com.squareup.retrofit2:converter-gson:2.4.0'
+    api 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+// ReactiveX
+    api 'io.reactivex:rxkotlin:0.60.0'
+    api 'io.reactivex.rxjava2:rxandroid:2.0.2'
 }
 
 configurations.all {
@@ -64,4 +81,7 @@ configurations.all {
             }
         }
     }
+}
+repositories {
+    mavenCentral()
 }

@@ -4,6 +4,6 @@ import io.reactivex.Single
 
 interface RepositoryContract {
     interface ITrendingReposRepository {
-        fun loadTrendingRepos(page: Int): Single<ReposContainer>
+        fun loadTrendingRepos(page: Int): Single<RepositoryContainer>
     }
 }

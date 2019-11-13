@@ -3,7 +3,7 @@ package com.urban.mobility.io.domain
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class ReposContainer(
+data class RepositoryContainer(
         @Expose @SerializedName("total_count") val totalCount: Int,
-        @Expose @SerializedName("items") val repos: List<Repo>
+        @Expose @SerializedName("items") val repositories: List<Repository>
 )

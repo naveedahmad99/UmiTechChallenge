@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class RepoOwner(
+data class RepositoryOwner(
         @Expose @SerializedName("id") val id: Long,
         @Expose @SerializedName("login") val username: String,
         @Expose @SerializedName("avatar_url") val avatar: String
@@ -26,12 +26,12 @@ data class RepoOwner(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<RepoOwner> {
-        override fun createFromParcel(parcel: Parcel): RepoOwner {
-            return RepoOwner(parcel)
+    companion object CREATOR : Parcelable.Creator<RepositoryOwner> {
+        override fun createFromParcel(parcel: Parcel): RepositoryOwner {
+            return RepositoryOwner(parcel)
         }
 
-        override fun newArray(size: Int): Array<RepoOwner?> {
+        override fun newArray(size: Int): Array<RepositoryOwner?> {
             return arrayOfNulls(size)
         }
     }

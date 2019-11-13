@@ -1,4 +1,4 @@
-package com.urban.mobility.io.data
+package com.urban.mobility.io.data.interfaces
 
 import com.urban.mobility.io.domain.RepositoryContainer
 import io.reactivex.Single

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.urban.mobility.io.R
-import com.urban.mobility.io.data.Error
+import com.urban.mobility.io.data.enums.Error
 import com.urban.mobility.io.data.KEY_DATA
 import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.ui.Action
@@ -38,7 +38,7 @@ class TrendingReposFragment : BaseFragment() {
     private var refresh = true
     private var reposAdapter: ReposRecyclerAdapter? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
@@ -55,11 +55,13 @@ class TrendingReposFragment : BaseFragment() {
             reposAdapter?.onRepoItemClickListener = ::onRepoClicked
             loadRepos(true)
         }
+
         recycler_repos.adapter = reposAdapter
         recycler_repos.layoutManager = LinearLayoutManager(context)
         swipe_repos.setOnRefreshListener {
             loadRepos(true)
         }
+
         recycler_repos.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

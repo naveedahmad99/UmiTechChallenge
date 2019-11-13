@@ -3,8 +3,8 @@
 
     <data>
         <variable
-            name="repo"
-            type="com.urban.mobility.io.domain.Repo" />
+            name="repository"
+            type="com.urban.mobility.io.domain.Repository" />
 
         <import type="android.view.View" />
     </data>
@@ -32,7 +32,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@{repo.name}"
+                android:text="@{repository.name}"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -40,7 +40,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Repo Name" />
+                tools:text="Repository Name" />
 
             <TextView
                 android:id="@+id/text_repo_description"
@@ -49,10 +49,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
-                android:text="@{repo.repoDescription}"
+                android:text="@{repository.repoDescription}"
                 android:textColor="@color/grey_600"
                 android:textSize="14sp"
-                android:visibility="@{(repo.repoDescription.length() == 0) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{(repository.repoDescription.length() == 0) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_repo_title"
@@ -67,7 +67,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/background_repo_owner_avatar"
                 android:contentDescription="@null"
-                android:src="@{repo.owner.avatar}"
+                android:src="@{repository.owner.avatar}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_repo_description" />
@@ -86,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="@{'@' + repo.owner.username}"
+                android:text="@{'@' + repository.owner.username}"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/text_author_title"
                 app:layout_constraintStart_toEndOf="@id/text_author_title"
@@ -100,7 +100,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="4dp"
                 android:text="@string/prompt_written_in"
-                android:visibility="@{(repo.language.length() == 0) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{(repository.language.length() == 0) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image_repo_owner" />
 
@@ -109,9 +109,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="@{repo.language}"
+                android:text="@{repository.language}"
                 android:textStyle="bold"
-                android:visibility="@{(repo.language.length() == 0) ? View.GONE : View.VISIBLE}"
+                android:visibility="@{(repository.language.length() == 0) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@id/text_written_in_title"
                 app:layout_constraintStart_toEndOf="@id/text_written_in_title"
                 app:layout_constraintTop_toTopOf="@id/text_written_in_title"
@@ -134,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:fontFamily="sans-serif-condensed"
-                android:text="@{String.valueOf(repo.stars)}"
+                android:text="@{String.valueOf(repository.stars)}"
                 app:layout_constraintBottom_toBottomOf="@id/img_star"
                 app:layout_constraintEnd_toStartOf="@id/img_star"
                 app:layout_constraintTop_toTopOf="@id/img_star"

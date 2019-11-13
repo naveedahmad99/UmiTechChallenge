@@ -18,13 +18,13 @@ import javax.inject.Singleton
     ApplicationModule::class,
     ContributorsModule::class
 ])
-interface ApplicationComponent : AndroidInjector<GithubApplication> {
+interface ApplicationComponent : AndroidInjector<UMIApplication> {
 
 
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun application(application: GithubApplication): Builder
+        fun application(application: UMIApplication): Builder
 
         fun build(): ApplicationComponent
     }

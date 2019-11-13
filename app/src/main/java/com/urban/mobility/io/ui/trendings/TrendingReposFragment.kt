@@ -7,10 +7,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.urban.mobility.io.data.Error
-import com.urban.mobility.io.domain.Repo
-import com.urban.mobility.io.KEY_DATA
 import com.urban.mobility.io.R
+import com.urban.mobility.io.data.Error
+import com.urban.mobility.io.data.KEY_DATA
+import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.ui.Action
 import com.urban.mobility.io.ui.ActionManager
 import com.urban.mobility.io.ui.ActionType
@@ -45,7 +45,7 @@ class TrendingReposFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        trendingReposVM.reposLiveData.observe(this, Observer<MutableList<Repo>>(::onChanged))
+        trendingReposVM.reposLiveData.observe(this, Observer<MutableList<Repository>>(::onChanged))
         trendingReposVM.errorsLiveData.observe(this, Observer<Error>(::onChanged))
     }
 
@@ -96,18 +96,18 @@ class TrendingReposFragment : BaseFragment() {
             }
             is MutableList<*> -> {
                 if (refresh) {
-                    reposAdapter!!.repos.clear()
+                    reposAdapter!!.repositories.clear()
                     refresh = false
                 }
-                reposAdapter!!.repos.addAll(data as Collection<Repo>)
+                reposAdapter!!.repositories.addAll(data as Collection<Repository>)
                 recycler_repos.adapter!!.notifyDataSetChanged()
             }
         }
     }
 
-    private fun onRepoClicked(repo: Repo) {
+    private fun onRepoClicked(repository: Repository) {
         val data = Bundle()
-        data.putParcelable(KEY_DATA, repo)
+        data.putParcelable(KEY_DATA, repository)
         actionManager.fire(Action(ActionType.ACTION_REPO, data))
     }
 

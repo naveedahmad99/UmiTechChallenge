@@ -4,11 +4,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
-import com.urban.mobility.io.domain.Repo
-import com.urban.mobility.io.KEY_DATA
+import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.R
 import com.urban.mobility.io.ui.BaseFragment
 import com.squareup.picasso.Picasso
+import com.urban.mobility.io.data.KEY_DATA
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,7 +24,7 @@ class RepoDetailsFragment : BaseFragment() {
     }
 
     override fun onViewReady(view: View, savedInstanceState: Bundle?) {
-        arguments?.getParcelable<Repo>(KEY_DATA)?.let { repo ->
+        arguments?.getParcelable<Repository>(KEY_DATA)?.let { repo ->
             Picasso
                     .get()
                     .load(Uri.parse(repo.owner.avatar))

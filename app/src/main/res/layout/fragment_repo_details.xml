@@ -16,11 +16,12 @@
             android:contentDescription="@null"
             android:foreground="@drawable/foreground_repo_owner_avatar"
             android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="3:1"
+            app:layout_constraintDimensionRatio="3:2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_octoface" />
+            tools:src="@drawable/ic_octoface"
+            tools:ignore="UnusedAttribute" />
 
         <TextView
             android:id="@+id/text_author"

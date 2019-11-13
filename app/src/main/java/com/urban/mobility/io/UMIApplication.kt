@@ -10,7 +10,7 @@ import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
 
-class GithubApplication : MultiDexApplication(), HasActivityInjector {
+class UMIApplication : MultiDexApplication(), HasActivityInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Activity>

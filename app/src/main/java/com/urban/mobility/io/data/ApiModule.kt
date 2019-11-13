@@ -1,6 +1,5 @@
 package com.urban.mobility.io.data
 
-import com.urban.mobility.io.API_REST_URL
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named

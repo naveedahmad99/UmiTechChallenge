@@ -1,4 +1,4 @@
-package com.urban.mobility.io.data
+package com.urban.mobility.io.data.enums
 
 enum class Error {
     SUCCESS,

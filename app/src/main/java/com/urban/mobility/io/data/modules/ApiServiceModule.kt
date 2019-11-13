@@ -1,7 +1,9 @@
-package com.urban.mobility.io.data
+package com.urban.mobility.io.data.modules
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.urban.mobility.io.data.NAMED_REST_API_URL
+import com.urban.mobility.io.data.interfaces.GithubWebservice
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient

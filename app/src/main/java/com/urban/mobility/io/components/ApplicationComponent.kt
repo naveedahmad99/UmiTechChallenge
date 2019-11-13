@@ -1,7 +1,7 @@
-package com.urban.mobility.io
+package com.urban.mobility.io.components
 
-import com.urban.mobility.io.data.ApiServiceModule
-import com.urban.mobility.io.data.ApiModule
+import com.urban.mobility.io.data.modules.ApiServiceModule
+import com.urban.mobility.io.data.modules.ApiModule
 import com.urban.mobility.io.ui.ApplicationModule
 import com.urban.mobility.io.ui.ContributorsModule
 import dagger.BindsInstance

@@ -1,5 +1,6 @@
 package com.urban.mobility.io.ui.repo
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateUtils
@@ -8,6 +9,7 @@ import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.R
 import com.urban.mobility.io.ui.BaseFragment
 import com.squareup.picasso.Picasso
+import com.urban.mobility.io.data.DATE_FORMAT
 import com.urban.mobility.io.data.KEY_DATA
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import java.text.SimpleDateFormat
@@ -23,6 +25,7 @@ class RepoDetailsFragment : BaseFragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewReady(view: View, savedInstanceState: Bundle?) {
         arguments?.getParcelable<Repository>(KEY_DATA)?.let { repo ->
             Picasso
@@ -39,7 +42,7 @@ class RepoDetailsFragment : BaseFragment() {
             text_stars.text = repo.stars.toString()
             text_forks.text = repo.forks.toString()
 
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            val dateFormat = SimpleDateFormat(DATE_FORMAT,Locale.getDefault())
             dateFormat.timeZone = TimeZone.getTimeZone("UTC")
             val updatedAt: Date = dateFormat.parse(repo.updatedAt)
 

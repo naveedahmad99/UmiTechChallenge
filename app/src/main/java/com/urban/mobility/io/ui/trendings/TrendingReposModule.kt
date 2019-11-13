@@ -1,6 +1,6 @@
 package com.urban.mobility.io.ui.trendings
 
-import com.urban.mobility.io.data.ISchedulersProvider
+import com.urban.mobility.io.data.interfaces.ISchedulersProvider
 import com.urban.mobility.io.domain.RepositoryContract
 import dagger.Module
 import dagger.Provides

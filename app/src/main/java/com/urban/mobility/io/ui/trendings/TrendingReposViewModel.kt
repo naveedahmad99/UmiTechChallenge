@@ -3,8 +3,8 @@ package com.urban.mobility.io.ui.trendings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.urban.mobility.io.data.Error
-import com.urban.mobility.io.data.ISchedulersProvider
+import com.urban.mobility.io.data.enums.Error
+import com.urban.mobility.io.data.interfaces.ISchedulersProvider
 import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.domain.RepositoryContract
 import retrofit2.HttpException

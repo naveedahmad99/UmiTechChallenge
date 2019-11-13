@@ -1,4 +1,4 @@
-package com.urban.mobility.io.data
+package com.urban.mobility.io.data.interfaces
 
 import io.reactivex.Scheduler
 

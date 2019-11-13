@@ -1,4 +1,4 @@
-package com.urban.mobility.io
+package com.urban.mobility.io.components
 
 import android.app.Activity
 import android.content.Context
@@ -19,8 +19,7 @@ class UMIApplication : MultiDexApplication(), HasActivityInjector {
         super.onCreate()
 
         // Dagger injection
-        DaggerApplicationComponent
-                .builder()
+        DaggerApplicationComponent.builder()
                 .application(this)
                 .build()
                 .inject(this)

@@ -1,0 +1,1231 @@
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/RepositoryModules.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/RepositoryModules.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/RepositoryModules.kt	(date 1573591231000)
+@@ -0,0 +1,10 @@
++package com.urban.mobility.io.utils.di
++
++import dagger.Module
++
++/* module for Repositories */
++@Module
++abstract class RepositoryModules {
++    /*if you add a new datastore & repository, add a new provideMethod. Like this */
++//  @Binds abstract fun bindSomeRepository(dataStore: SomeDataStore): SomeRepository
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/commons/ExecutionThreads.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/commons/ExecutionThreads.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/commons/ExecutionThreads.kt	(date 1573591231000)
+@@ -0,0 +1,8 @@
++package com.urban.mobility.io.utils.commons
++
++import io.reactivex.Scheduler
++
++interface ExecutionThreads {
++    fun io(): Scheduler
++    fun ui(): Scheduler
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/commons/BaseView.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/commons/BaseView.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/commons/BaseView.kt	(date 1573591231000)
+@@ -0,0 +1,4 @@
++package com.urban.mobility.io.utils.commons
++
++interface BaseView {
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/commons/BasePresenter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/commons/BasePresenter.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/commons/BasePresenter.kt	(date 1573591231000)
+@@ -0,0 +1,5 @@
++package com.urban.mobility.io.utils.commons
++
++interface BasePresenter {
++    fun dispose()
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/UseCaseModules.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/UseCaseModules.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/UseCaseModules.kt	(date 1573591231000)
+@@ -0,0 +1,10 @@
++package com.urban.mobility.io.utils.di
++
++import dagger.Binds
++import dagger.Module
++
++@Module
++abstract class UseCaseModules {
++    /* if you add a new useCase, add a new bind as below */
++    // @Binds internal abstract fun bindSomeUseCase(someUseCaseImpl: SomeUseCaseImpl): SomeUseCase
++}
+\ No newline at end of file
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/RootComponent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/RootComponent.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/RootComponent.kt	(date 1573591232000)
+@@ -0,0 +1,22 @@
++package com.urban.mobility.io.utils.di
++
++import dagger.Component
++import dagger.android.AndroidInjector
++import dagger.android.support.AndroidSupportInjectionModule
++import com.urban.mobility.io.MainApplication
++import javax.inject.Singleton
++
++@Singleton
++@Component(
++    modules = [
++        AndroidSupportInjectionModule::class,
++        ApplicationModule::class,
++        RepositoryModules::class,
++        ApiModules::class,
++        UseCaseModules::class,
++        BindingModules::class]
++)
++interface RootComponent : AndroidInjector<MainApplication> {
++    @Component.Builder
++    abstract class Builder : AndroidInjector.Builder<MainApplication>()
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/ViewModelFactory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/ViewModelFactory.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/ViewModelFactory.kt	(date 1573591232000)
+@@ -0,0 +1,30 @@
++package com.urban.mobility.io.utils.di
++
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.ViewModelProvider
++import javax.inject.Inject
++import javax.inject.Provider
++
++class ViewModelFactory @Inject constructor(
++    private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
++) : ViewModelProvider.Factory {
++
++    @Suppress("UNCHECKED_CAST")
++    override fun <T : ViewModel> create(modelClass: Class<T>): T {
++        var creator: Provider<ViewModel>? = creators[modelClass]
++        if (creator == null) {
++            for ((key, value) in creators) {
++                if (modelClass.isAssignableFrom(key)) {
++                    creator = value
++                    break
++                }
++            }
++        }
++        if (creator == null) throw IllegalArgumentException("unknown model class " + modelClass)
++        try {
++            return creator.get() as T
++        } catch (e: Exception) {
++            throw RuntimeException(e)
++        }
++    }
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/Injectable.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/Injectable.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/Injectable.kt	(date 1573591232000)
+@@ -0,0 +1,62 @@
++package com.urban.mobility.io.utils.di
++
++import android.app.Activity
++import android.app.Application
++import android.os.Bundle
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.FragmentActivity
++import androidx.fragment.app.FragmentManager
++import dagger.android.AndroidInjection
++import dagger.android.support.AndroidSupportInjection
++import dagger.android.support.HasSupportFragmentInjector
++
++interface Injectable
++
++fun Application.applyAutoInjector() = registerActivityLifecycleCallbacks(
++    object : Application.ActivityLifecycleCallbacks {
++
++        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
++            handleActivity(activity)
++        }
++
++        override fun onActivityStarted(activity: Activity) {
++
++        }
++
++        override fun onActivityResumed(activity: Activity) {
++
++        }
++
++        override fun onActivityPaused(activity: Activity) {
++
++        }
++
++        override fun onActivityStopped(activity: Activity) {
++
++        }
++
++        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) {
++
++        }
++
++        override fun onActivityDestroyed(activity: Activity) {
++
++        }
++    })
++
++private fun handleActivity(activity: Activity) {
++    if (activity is Injectable || activity is HasSupportFragmentInjector) {
++        AndroidInjection.inject(activity)
++    }
++    if (activity is FragmentActivity) {
++        activity.supportFragmentManager.registerFragmentLifecycleCallbacks(
++            object : FragmentManager.FragmentLifecycleCallbacks() {
++                override fun onFragmentCreated(fm: FragmentManager, f: Fragment, s: Bundle?) {
++                    if (f is Injectable) {
++                        AndroidSupportInjection.inject(f)
++                    }
++                }
++            }, true
++        )
++    }
++}
+Index: app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker	(date 1573591231000)
++++ app/src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker	(date 1573591231000)
+@@ -0,0 +1,1 @@
++mock-maker-inline
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Observable.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Observable.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Observable.kt	(date 1573591232000)
+@@ -0,0 +1,15 @@
++package com.urban.mobility.io.utils.extensions
++
++import io.reactivex.Observable
++import io.reactivex.android.schedulers.AndroidSchedulers
++import io.reactivex.internal.operators.observable.ObservableSubscribeOn
++import io.reactivex.plugins.RxJavaPlugins
++
++fun <T> Observable<T>.subscribeOnMainThread(): Observable<T> {
++    return RxJavaPlugins.onAssembly<T>(
++        ObservableSubscribeOn<T>(
++            this,
++            AndroidSchedulers.mainThread()
++        )
++    )
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/extensions/LiveDataReactiveStreams.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/extensions/LiveDataReactiveStreams.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/extensions/LiveDataReactiveStreams.kt	(date 1573591231000)
+@@ -0,0 +1,7 @@
++package com.urban.mobility.io.utils.extensions
++
++import androidx.lifecycle.LiveData
++import androidx.lifecycle.LiveDataReactiveStreams
++import org.reactivestreams.Publisher
++
++fun <T> Publisher<T>.toLiveData() = LiveDataReactiveStreams.fromPublisher(this) as LiveData<T>
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Fragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Fragment.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Fragment.kt	(date 1573591231000)
+@@ -0,0 +1,7 @@
++package com.urban.mobility.io.utils.extensions
++
++import androidx.fragment.app.Fragment
++
++inline fun <reified T> Fragment.lazyWithArgs(key: String): Lazy<T> {
++    return lazy { arguments!!.get(key) as T }
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Activity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Activity.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/extensions/Activity.kt	(date 1573591231000)
+@@ -0,0 +1,7 @@
++package com.urban.mobility.io.utils.extensions
++
++import android.app.Activity
++
++inline fun <reified T> Activity.lazyWithExtras(key: String): Lazy<T> {
++    return lazy { intent.extras.get(key) as T }
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/commons/UseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/commons/UseCase.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/commons/UseCase.kt	(date 1573591232000)
+@@ -0,0 +1,106 @@
++package com.urban.mobility.io.utils.commons
++
++import dagger.internal.Preconditions
++import io.reactivex.Observable
++import io.reactivex.disposables.CompositeDisposable
++import io.reactivex.disposables.Disposable
++import timber.log.Timber
++
++/**
++ * Use case interface, accessed from the Presentation layer via this interface, in other words, only the objects defined in this interface are visible to the Presentation
++ */
++interface IUseCase {
++    /**
++     * Execute RxJava Dispose processing
++     */
++    fun dispose()
++
++    /**
++     * Request parameters
++     */
++    interface RequestValue
++
++    /**
++     * Response parameter
++     */
++    interface ResponseValue
++
++
++    /**
++     * Delegate object for receiving the processing results performed in the Domain layer in the Presentation layer, which has the same structure as the RxJava response format
++     */
++    data class DelegateSubscriber<in R : ResponseValue>(
++        val next: (R) -> Unit = {},
++        val error: (Throwable) -> Unit = {
++            Timber.e(it)
++        },
++        val complete: () -> Unit = {}
++    )
++
++    /**
++     * Use this when there is no request parameter
++     */
++    object NoRequestValue : RequestValue
++
++    /**
++     * Use this when there is no response parameter
++     */
++    object NoResponseValue : ResponseValue
++}
++
++/**
++ * Express the specific processing of UseCase.
++ */
++internal interface UseCaseProcess<in Q : IUseCase.RequestValue, R : IUseCase.ResponseValue> {
++    fun execProcess(requestValue: Q): Observable<R>
++}
++
++internal abstract class UseCaseHelper<in Q : IUseCase.RequestValue, R : IUseCase.ResponseValue, in S : UseCaseProcess<Q, R>, in T : IUseCase.DelegateSubscriber<R>>(
++    private val executionThreads: ExecutionThreads
++) {
++
++    protected val disposable: CompositeDisposable = CompositeDisposable()
++
++    /**
++     * @param requestValue: requestParams
++     * @param delegateSubscriber: Delegate object for receiving the result of processing performed in the Domain layer in the Presentation layer
++     * @param process: Specific processing contents, scope is only Domain layer
++     * @param disposableClear: Whether to clear the previous process if the previous process still remains when the same UseCase is executed, default is false and not cleared
++     */
++    @Suppress("UNCHECKED_CAST")
++    internal fun execute(
++        requestValue: Q,
++        delegateSubscriber: T,
++        process: S,
++        disposableClear: Boolean = false
++    ): Observable<R> {
++        if (disposableClear) disposable.clear()
++        val observable = process.execProcess(requestValue)
++            .subscribeOn(executionThreads.io())
++            .observeOn(executionThreads.ui())
++
++        addDisposable(
++            observable.subscribe(
++                delegateSubscriber.next,
++                delegateSubscriber.error as (Throwable) -> Unit,
++                delegateSubscriber.complete
++            )
++        )
++        return observable
++    }
++
++    fun dispose() {
++        if (!disposable.isDisposed) {
++            disposable.dispose()
++        }
++    }
++
++    /**
++     * Dispose from current [CompositeDisposable].
++     */
++    private fun addDisposable(disposable: Disposable) {
++        Preconditions.checkNotNull(disposable)
++        Preconditions.checkNotNull(this.disposable)
++        this.disposable.add(disposable)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/kotlin/com/urban/mobility/io/MainApplication.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/MainApplication.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/MainApplication.kt	(date 1573591231000)
+@@ -0,0 +1,21 @@
++package com.urban.mobility.io
++
++import com.jakewharton.threetenabp.AndroidThreeTen
++import dagger.android.AndroidInjector
++import dagger.android.support.DaggerApplication
++import timber.log.Timber
++
++class MainApplication : DaggerApplication() {
++    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
++        return DaggerRootComponent.builder().create(this)
++    }
++
++    override fun onCreate() {
++        super.onCreate()
++        if (BuildConfig.DEBUG) {
++            Timber.plant(Timber.DebugTree())
++        }
++        AndroidThreeTen.init(this);
++        applyAutoInjector()
++    }
++}
+Index: proguard/proguard-okhttp3.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-okhttp3.pro	(date 1573591231000)
++++ proguard/proguard-okhttp3.pro	(date 1573591231000)
+@@ -0,0 +1,8 @@
++# OkHttp
++-keepattributes Signature
++-keepattributes *Annotation*
++-keep class okhttp3.** { *; }
++-keep interface okhttp3.** { *; }
++-dontwarn okhttp3.**
++# A resource is loaded with a relative path so the package of this class must be preserved.
++-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+Index: proguard/proguard-support-v7-appcompat.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-support-v7-appcompat.pro	(date 1573591231000)
++++ proguard/proguard-support-v7-appcompat.pro	(date 1573591231000)
+@@ -0,0 +1,5 @@
++# Support Library
++# TODO if you add some Support Library, fix this proguard
++
++## example
++# -keep class android.support.v7.widget.SearchView { *; }
+Index: proguard/proguard-support-design.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-support-design.pro	(date 1573591231000)
++++ proguard/proguard-support-design.pro	(date 1573591231000)
+@@ -0,0 +1,9 @@
++# Support Design library
++# We use reflection to change these, so we need to keep them.
++
++-keepclassmembers class android.support.design.internal.BottomNavigationMenuView {
++    private boolean mShiftingMode;
++}
++-keepclassmembers class android.support.design.internal.BottomNavigationItemView {
++    private int mDefaultMargin;
++}
+Index: proguard/proguard-rx-java2.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-rx-java2.pro	(date 1573591231000)
++++ proguard/proguard-rx-java2.pro	(date 1573591231000)
+@@ -0,0 +1,19 @@
++-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
++   long producerIndex;
++   long consumerIndex;
++}
++
++-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
++    rx.internal.util.atomic.LinkedQueueNode producerNode;
++}
++
++-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
++    rx.internal.util.atomic.LinkedQueueNode consumerNode;
++}
++
++-dontnote rx.internal.util.PlatformDependent
++
++-keep class io.reactivex.Scheduler
++-keep class io.reactivex.Observer
++-keep class io.reactivex.disposables.Disposable
++-keep class io.reactivex.Observable
+Index: proguard/proguard-rx-java.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-rx-java.pro	(date 1573591231000)
++++ proguard/proguard-rx-java.pro	(date 1573591231000)
+@@ -0,0 +1,12 @@
++-keep class rx.schedulers.Schedulers {
++    public static <methods>;
++}
++-keep class rx.schedulers.ImmediateScheduler {
++    public <methods>;
++}
++-keep class rx.schedulers.TestScheduler {
++    public <methods>;
++}
++-keep class rx.schedulers.Schedulers {
++    public static ** test();
++}
+Index: proguard/proguard-google-dagger2.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-google-dagger2.pro	(date 1573591231000)
++++ proguard/proguard-google-dagger2.pro	(date 1573591231000)
+@@ -0,0 +1,1 @@
++ -dontwarn com.google.errorprone.annotations.*
+Index: app/FIXME_merge_to_build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/FIXME_merge_to_build.gradle	(date 1573591231000)
++++ app/FIXME_merge_to_build.gradle	(date 1573591231000)
+@@ -0,0 +1,14 @@
++/* 1st:Merge below settings to app's build.gradle
++   2nd:Remove this file !!  */
++
++// FIXME add below to file top
++apply plugin: "com.github.konifar.gradle.unused-resources-remover"
++apply plugin: 'realm-android'
++// FIXME add below to file end!
++configurations.all {
++    //FIXME replace version to SAME support Library Version!!
++    resolutionStrategy.force "com.android.support:support-annotations:+"
++}
++
++// FIXME add below to file end!
++clean.dependsOn(removeUnusedResources)
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\nbuildscript {\n    ext.kotlin_version = '1.3.50'\n    repositories {\n        google()\n        jcenter()\n        \n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:3.5.2'\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n        // NOTE: Do not place your application dependencies here; they belong\n        // in the individual module build.gradle files\n    }\n}\n\nallprojects {\n    repositories {\n        google()\n        jcenter()\n        \n    }\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(date 1573591155000)
++++ build.gradle	(date 1573591997000)
+@@ -5,13 +5,18 @@
+     repositories {
+         google()
+         jcenter()
+-        
++        maven { url "https://plugins.gradle.org/m2/" }
++        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+     }
+     dependencies {
+         classpath 'com.android.tools.build:gradle:3.5.2'
+         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
++        classpath "io.realm:realm-gradle-plugin:+"
++        classpath "gradle.plugin.com.github.konifar.gradle:plugin:+"
++        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.3.1.1"
++        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:+"
+     }
+ }
+ 
+Index: FIXME_merge_to_build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- FIXME_merge_to_build.gradle	(date 1573591231000)
++++ FIXME_merge_to_build.gradle	(date 1573591231000)
+@@ -0,0 +1,16 @@
++/* 1st:Merge below settings to Project's build.gradle
++   2nd:Remove this file !!  */
++
++buildscript {
++    // FIXME add belows
++    repositories {
++        maven { url "https://plugins.gradle.org/m2/" }
++        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
++    }
++    dependencies {
++        classpath "io.realm:realm-gradle-plugin:+"
++        classpath "gradle.plugin.com.github.konifar.gradle:plugin:+"
++        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.3.1.1"
++        classpath "android.arch.navigation:navigation-safe-args-gradle-plugin:+"
++    }
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/BindingModules.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/BindingModules.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/BindingModules.kt	(date 1573591232000)
+@@ -0,0 +1,15 @@
++package com.urban.mobility.io.utils.di
++
++import androidx.lifecycle.ViewModelProvider
++import dagger.Binds
++import dagger.Module
++
++/* bind modules for Presenter's modules */
++@Module
++internal abstract class BindingModules {
++    @Binds
++    abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
++
++    /*If you add a new presenter(activity, broadcast, service), add a new contributeMethod. For detail, refer to FIXME of each presenter's module */
++
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/ApplicationModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/ApplicationModule.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/ApplicationModule.kt	(date 1573591232000)
+@@ -0,0 +1,50 @@
++package com.urban.mobility.io.utils.di
++
++import com.urban.mobility.io.utils.commons.ExecutionThreads
++
++import android.content.Context
++import android.content.SharedPreferences
++import dagger.Module
++import dagger.Provides
++import io.reactivex.Scheduler
++import io.reactivex.android.schedulers.AndroidSchedulers
++import io.reactivex.schedulers.Schedulers
++import io.realm.Realm
++import io.realm.RealmConfiguration
++import com.urban.mobility.io.MainApplication
++import com.urban.mobility.io.R
++import com.urban.mobility.io.BuildConfig
++
++/* Module for Application */
++@Module
++class ApplicationModule {
++    @Provides
++    fun provideContext(application: MainApplication): Context = application
++
++    @Provides
++    fun provideSharedPreference(application: MainApplication): SharedPreferences =
++        application.getSharedPreferences(
++            application.getString(R.string.app_name),
++            Context.MODE_PRIVATE
++        )
++
++    @Provides
++    fun provideRealm(application: MainApplication): Realm {
++        val builder = RealmConfiguration.Builder().name(application.getString(R.string.app_name))
++        return if (BuildConfig.DEBUG) {
++            Realm.getInstance(builder.deleteRealmIfMigrationNeeded().build())
++        } else {
++            Realm.getInstance(builder.build())
++        }
++    }
++
++    @Provides
++    fun provideExecutionThreads(): ExecutionThreads {
++        return object : ExecutionThreads {
++            override fun ui(): Scheduler = AndroidSchedulers.mainThread()
++            override fun io(): Scheduler = Schedulers.io()
++        }
++    }
++
++
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/di/ApiModules.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/di/ApiModules.kt	(date 1573591232000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/di/ApiModules.kt	(date 1573591232000)
+@@ -0,0 +1,67 @@
++package com.urban.mobility.io.utils.di
++
++import dagger.Module
++import com.squareup.moshi.KotlinJsonAdapterFactory
++import com.squareup.moshi.Moshi
++import dagger.Provides
++import okhttp3.OkHttpClient
++import okhttp3.logging.HttpLoggingInterceptor
++import retrofit.MoshiConverterFactory
++import retrofit2.Converter
++import retrofit2.Retrofit
++import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
++
++/* module for API connection(e.g retrofit2, http3, etc..) */
++@Module
++class ApiModules {
++    @Provides
++    fun provideOkHttpClientBuilder(): OkHttpClient.Builder {
++        val interceptor = HttpLoggingInterceptor()
++        interceptor.level = HttpLoggingInterceptor.Level.BODY
++        return OkHttpClient.Builder().addInterceptor(interceptor)
++    }
++
++    private fun createRetrofitBuilder(endPoint: String): Retrofit.Builder =
++        Retrofit.Builder()
++            .baseUrl(endPoint)
++            .addConverterFactory(
++                MoshiConverterFactory.create(
++                    Moshi.Builder()
++                        // Add any other JsonAdapter factories.
++                        .add(KotlinJsonAdapterFactory())
++                        .build()
++                ) as Converter.Factory
++            )
++            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
++
++    @Provides
++    fun provideRetrofitBuilder(): Retrofit.Builder {
++        return createRetrofitBuilder("http://localhost/some/api")
++    }
++
++
++    private fun createApiClient(
++        retrofitBuilder: Retrofit.Builder,
++        builder: OkHttpClient.Builder
++    ): ApiClient {
++        val client = ApiClient()
++        client.adapterBuilder = retrofitBuilder
++        client.configureFromOkclient(builder.build())
++        return client
++    }
++
++    @Provides
++    fun provideApiClient(
++        retrofitBuilder: Retrofit.Builder,
++        builder: OkHttpClient.Builder
++    ): ApiClient {
++        return createApiClient(retrofitBuilder, builder)
++    }
++
++    /*FIXME if you add some Swagger ApiService, add provide method. Like this */
++    // @Provides fun provideSomeApi(client: ApiClient): SomeApiService {
++    //    return client.createService(SomeApiService::class.java)
++    // }
++
++
++}
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ViewModelKey.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ViewModelKey.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ViewModelKey.kt	(date 1573591231000)
+@@ -0,0 +1,12 @@
++package com.urban.mobility.io.utils.annotations
++
++import androidx.lifecycle.ViewModel
++import dagger.MapKey
++import kotlin.reflect.KClass
++
++
++@MustBeDocumented
++@Target(AnnotationTarget.FUNCTION)
++@Retention(AnnotationRetention.RUNTIME)
++@MapKey
++internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/annotations/FragmentScope.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/annotations/FragmentScope.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/annotations/FragmentScope.kt	(date 1573591231000)
+@@ -0,0 +1,3 @@
++package com.urban.mobility.io.utils.annotations
++
++annotation class FragmentScope
+Index: app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ActivityScope.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ActivityScope.kt	(date 1573591231000)
++++ app/src/main/kotlin/com/urban/mobility/io/utils/annotations/ActivityScope.kt	(date 1573591231000)
+@@ -0,0 +1,3 @@
++package com.urban.mobility.io.utils.annotations
++
++annotation class ActivityScope
+Index: proguard/proguard-moshi.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-moshi.pro	(date 1573591231000)
++++ proguard/proguard-moshi.pro	(date 1573591231000)
+@@ -0,0 +1,10 @@
++-dontwarn okio.**
++-dontwarn javax.annotation.**
++-keepclasseswithmembers class * {
++    @com.squareup.moshi.* <methods>;
++}
++-keep @com.squareup.moshi.JsonQualifier interface *
++
++-keepclassmembers class kotlin.Metadata {
++    public <methods>;
++}
+Index: proguard/proguard-square-retrofit2.pro
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- proguard/proguard-square-retrofit2.pro	(date 1573591231000)
++++ proguard/proguard-square-retrofit2.pro	(date 1573591231000)
+@@ -0,0 +1,11 @@
++# Retrofit 2.X
++## https://square.github.io/retrofit/ ##
++
++-dontwarn retrofit2.**
++-keep class retrofit2.** { *; }
++-keepattributes Signature
++-keepattributes Exceptions
++
++-keepclasseswithmembers class * {
++    @retrofit2.http.* <methods>;
++}
+Index: buildSrc/settings.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- buildSrc/settings.gradle.kts	(date 1573591230000)
++++ buildSrc/settings.gradle.kts	(date 1573591230000)
+@@ -0,0 +1,0 @@
+Index: buildSrc/src/main/kotlin/Dependencies.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- buildSrc/src/main/kotlin/Dependencies.kt	(date 1573591230000)
++++ buildSrc/src/main/kotlin/Dependencies.kt	(date 1573591230000)
+@@ -0,0 +1,81 @@
++object Versions {
++    const val compileSdk = 28
++    const val minSdk = 21
++    const val targetSdk = 28
++}
++
++@Suppress("Reformat")
++object Deps {
++    object Kotlin {
++        const val version = "1.3.50"
++        const val stdlibJdk = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$version"
++    }
++
++    object AndroidX {
++        private const val coreVersion = "1.0.2"
++        const val appCompat = "androidx.appcompat:appcompat:$coreVersion"
++        const val coreKtx = "androidx.core:core-ktx:$coreVersion"
++        const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
++    }
++
++    object Dagger {
++        private const val version = "2.20"
++        const val compiler = "com.google.dagger:dagger-compiler:$version"
++        const val processor = "com.google.dagger:dagger-android-processor:$version"
++        const val core = "com.google.dagger:dagger:$version"
++        const val android = "com.google.dagger:dagger-android:$version"
++        const val androidSupport = "com.google.dagger:dagger-android-support:$version"
++    }
++
++    object RxJava {
++        const val core = "io.reactivex.rxjava2:rxjava:2.2.4"
++        const val kotlin = "io.reactivex.rxjava2:rxkotlin:2.3.0"
++        const val android = "io.reactivex.rxjava2:rxandroid:2.0.1"
++    }
++
++    object Timber {
++        const val core = "com.jakewharton.timber:timber:4.7.1"
++    }
++
++    object Test {
++        object Spek {
++            private const val version = "2.0.4"
++            const val core = "org.spekframework.spek2:spek-dsl-jvm:$version"
++            const val runner = "org.spekframework.spek2:spek-runner-junit5:$version"
++
++        }
++
++        object MockK {
++            const val core = "io.mockk:mockk:1.9.2.kotlin12"
++        }
++
++        object Kotlin {
++            const val core = "org.jetbrains.kotlin:kotlin-test:${Deps.Kotlin.version}"
++            const val junit = "org.jetbrains.kotlin:kotlin-test-junit:${Deps.Kotlin.version}"
++            const val reflect = "org.jetbrains.kotlin:kotlin-reflect:${Deps.Kotlin.version}"
++            const val stdlibJdk = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Deps.Kotlin.version}"
++        }
++
++        object JUnit {
++            private const val jupiterVersion = "5.3.1"
++            const val core = "junit:junit:4.12"
++            const val runner = "org.junit.platform:junit-platform-runner:1.1.0"
++            const val vintageEngine = "org.junit.vintage:junit-vintage-engine:5.2.0"
++            const val jupiterApi = "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
++            const val jupiterEngine = "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
++        }
++
++        object AndroidX {
++            const val runner = "androidx.test:runner:1.2.0"
++            const val espresso = "androidx.test.espresso:espresso-core:3.2.0"
++        }
++    }
++
++    object Leakanary {
++        const val core = "com.squareup.leakcanary:leakcanary-android:1.6.2"
++    }
++
++    object Threetenabp {
++        const val core = "com.jakewharton.threetenabp:threetenabp:1.2.1"
++    }
++}
+\ No newline at end of file
+Index: buildSrc/src/main/kotlin/common-library.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- buildSrc/src/main/kotlin/common-library.gradle.kts	(date 1573591232000)
++++ buildSrc/src/main/kotlin/common-library.gradle.kts	(date 1573591232000)
+@@ -0,0 +1,95 @@
++import de.mannodermaus.gradle.plugins.junit5.junitPlatform
++
++plugins {
++    id("com.android.library")
++    id("kotlin-android")
++    id("kotlin-android-extensions")
++    id("kotlin-kapt")
++    id("de.mannodermaus.android-junit5")
++}
++
++android {
++    compileSdkVersion(Versions.compileSdk)
++    defaultConfig {
++        minSdkVersion(Versions.minSdk)
++        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
++        testInstrumentationRunnerArgument(
++            "runnerBuilder",
++            "de.mannodermaus.junit5.AndroidJUnit5Builder"
++        )
++    }
++
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_1_8
++        targetCompatibility = JavaVersion.VERSION_1_8
++    }
++
++    buildTypes {
++        getByName("debug") {
++            signingConfig = signingConfigs.getByName("debug")
++            versionNameSuffix = "-dubug"
++        }
++        getByName("release") {
++            isMinifyEnabled = false
++            isDebuggable = false
++            isZipAlignEnabled = true
++            isShrinkResources = true
++            consumerProguardFile(file("proguard-rules.pro"))
++        }
++    }
++
++    sourceSets {
++        getByName("main").java.srcDirs("src/main/kotlin")
++        getByName("test").java.srcDirs("src/test/kotlin")
++        getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
++    }
++
++    testOptions {
++        junitPlatform {
++            filters {
++                includeEngines("spek2")
++                includeEngines("junit-vintage")
++            }
++        }
++        unitTests.isIncludeAndroidResources = true
++    }
++
++
++    dexOptions.javaMaxHeapSize = "2g"
++}
++
++dependencies {
++    implementation(fileTree(mapOf("dir" to "libs", "include" to arrayOf("*.jar"))))
++    kapt(Deps.Dagger.compiler)
++    kapt(Deps.Dagger.processor)
++    implementation(Deps.Dagger.core)
++    implementation(Deps.Dagger.android)
++    implementation(Deps.Dagger.androidSupport)
++    implementation(Deps.RxJava.core)
++    implementation(Deps.RxJava.kotlin)
++    implementation(Deps.RxJava.android)
++    implementation(Deps.Timber.core)
++    implementation(Deps.Threetenabp.core)
++
++    testImplementation(Deps.Test.Spek.core)
++    testImplementation(Deps.Test.Spek.runner)
++    testImplementation(Deps.Test.MockK.core)
++    testImplementation(Deps.Test.Kotlin.core)
++    testImplementation(Deps.Test.Kotlin.junit)
++    testImplementation(Deps.Test.Kotlin.reflect)
++    testImplementation(Deps.Test.Kotlin.stdlibJdk)
++    testImplementation(Deps.Test.JUnit.core)
++    testImplementation(Deps.Test.JUnit.runner)
++    testImplementation(Deps.Test.JUnit.jupiterApi)
++    testImplementation(Deps.Test.JUnit.jupiterEngine)
++    testImplementation(Deps.Test.JUnit.vintageEngine)
++
++    androidTestImplementation(Deps.Test.AndroidX.runner)
++    androidTestImplementation(Deps.Test.AndroidX.espresso)
++}
++
++kotlin {
++    sourceSets.all {
++        languageSettings.progressiveMode = true
++    }
++}
+\ No newline at end of file
+Index: buildSrc/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- buildSrc/build.gradle.kts	(date 1573591230000)
++++ buildSrc/build.gradle.kts	(date 1573591230000)
+@@ -0,0 +1,14 @@
++plugins {
++    `kotlin-dsl`
++}
++
++repositories {
++    google()
++    jcenter()
++}
++
++dependencies {
++    implementation("com.android.tools.build:gradle:3.4.2")
++    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.50")
++    implementation("de.mannodermaus.gradle.plugins:android-junit5:1.3.1.1")
++}
+\ No newline at end of file
+Index: buildSrc/src/main/kotlin/android-application.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- buildSrc/src/main/kotlin/android-application.gradle.kts	(date 1573591230000)
++++ buildSrc/src/main/kotlin/android-application.gradle.kts	(date 1573591230000)
+@@ -0,0 +1,72 @@
++plugins {
++    id("com.android.application")
++    id("kotlin-android")
++    id("kotlin-android-extensions")
++    id("kotlin-kapt")
++}
++
++android {
++    compileSdkVersion(Versions.compileSdk)
++    defaultConfig {
++        minSdkVersion(Versions.minSdk)
++        targetSdkVersion(Versions.targetSdk)
++        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
++    }
++
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_1_8
++        targetCompatibility = JavaVersion.VERSION_1_8
++    }
++
++    buildTypes {
++        getByName("debug") {
++            signingConfig = signingConfigs.getByName("debug")
++            versionNameSuffix = "-dubug"
++        }
++        getByName("release") {
++            isMinifyEnabled = false
++            isDebuggable = false
++            isZipAlignEnabled = true
++            isShrinkResources = true
++            consumerProguardFile(file("proguard-rules.pro"))
++            proguardFiles(File(".//.//proguard").listFiles()!!.filter { it.name.startsWith("proguard") }.toList())
++        }
++    }
++
++    sourceSets {
++        getByName("main").java.srcDirs("src/main/kotlin")
++        getByName("test").java.srcDirs("src/test/kotlin")
++        getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
++    }
++
++    dataBinding.isEnabled = true
++
++    dexOptions.javaMaxHeapSize = "2g"
++}
++
++dependencies {
++    implementation(fileTree(mapOf("dir" to "libs", "include" to arrayOf("*.jar"))))
++    implementation(Deps.Kotlin.stdlibJdk)
++    kapt(Deps.Dagger.compiler)
++    kapt(Deps.Dagger.processor)
++    implementation(Deps.Dagger.core)
++    implementation(Deps.Dagger.android)
++    implementation(Deps.Dagger.androidSupport)
++    implementation(Deps.RxJava.core)
++    implementation(Deps.RxJava.kotlin)
++    implementation(Deps.RxJava.android)
++    implementation(Deps.Timber.core)
++    implementation(Deps.Threetenabp.core)
++
++
++    testImplementation(Deps.Test.JUnit.core)
++    androidTestImplementation(Deps.Test.AndroidX.runner)
++    androidTestImplementation(Deps.Test.AndroidX.espresso)
++    debugImplementation(Deps.Leakanary.core)
++}
++
++kotlin {
++    sourceSets.all {
++        languageSettings.progressiveMode = true
++    }
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.urban.mobility.io\">\n\n    <application\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/AppTheme\" />\n</manifest>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1573591155000)
++++ app/src/main/AndroidManifest.xml	(date 1573591232000)
+@@ -1,11 +1,16 @@
++<?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     package="com.urban.mobility.io">
+ 
++    <uses-permission android:name="android.permission.INTERNET" />
++
+     <application
++        android:name=".MainApplication"
+         android:allowBackup="true"
+         android:icon="@mipmap/ic_launcher"
+         android:label="@string/app_name"
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/AppTheme" />
+-</manifest>
++
++</manifest>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\n\napply plugin: 'kotlin-android'\n\napply plugin: 'kotlin-android-extensions'\n\nandroid {\n    compileSdkVersion 29\n    buildToolsVersion \"29.0.2\"\n    defaultConfig {\n        applicationId \"com.urban.mobility.io\"\n        minSdkVersion 21\n        targetSdkVersion 29\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n    implementation 'androidx.appcompat:appcompat:1.1.0'\n    implementation 'androidx.core:core-ktx:1.1.0'\n    testImplementation 'junit:junit:4.12'\n    androidTestImplementation 'androidx.test.ext:junit:1.1.0'\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(date 1573591155000)
++++ app/build.gradle	(date 1573592162000)
+@@ -1,8 +1,10 @@
+ apply plugin: 'com.android.application'
+ 
+ apply plugin: 'kotlin-android'
+-
++apply plugin: 'kotlin-kapt'
+ apply plugin: 'kotlin-android-extensions'
++apply plugin: "com.github.konifar.gradle.unused-resources-remover"
++apply plugin: 'realm-android'
+ 
+ android {
+     compileSdkVersion 29
+@@ -25,10 +27,25 @@
+ 
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
++    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+     implementation 'androidx.appcompat:appcompat:1.1.0'
+     implementation 'androidx.core:core-ktx:1.1.0'
++    implementation 'com.squareup.retrofit2:retrofit:+'
++    implementation 'com.squareup.retrofit2:converter-scalars:+'
++    implementation 'com.squareup.retrofit2:adapter-rxjava2:+'
++    implementation 'com.squareup.okhttp3:logging-interceptor:+'
++    implementation 'com.squareup.retrofit:converter-moshi:+'
++    implementation 'com.squareup.moshi:moshi:+'
++    implementation 'com.squareup.moshi:moshi-kotlin:+'
+     testImplementation 'junit:junit:4.12'
++    testImplementation 'com.squareup.okhttp3:mockwebserver:+'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+ }
++
++configurations.all {
++    //FIXME replace version to SAME support Library Version!!
++    resolutionStrategy.force "com.android.support:support-annotations:+"
++}
++
++clean.dependsOn(removeUnusedResources)

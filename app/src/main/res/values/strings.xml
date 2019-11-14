@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Trending Repositories</string>
-    <string name="prompt_written_in">Written in</string>
+    <string name="app_name">Popular Repositories</string>
+    <string name="prompt_written_in">Language</string>
     <string name="prompt_by">By</string>
     <string name="prefix_updated">Updated</string>
+    <string name="name">Name: </string>
 </resources>

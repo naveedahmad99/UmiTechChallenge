@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 object BindingAdapter {
 
     @JvmStatic
-    @BindingAdapter("app:srcCompat")
+    @BindingAdapter("srcCompat")
     fun setImageUrl(view: ImageView, url: String) {
         Picasso
                 .get()

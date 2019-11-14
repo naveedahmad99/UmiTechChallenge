@@ -1,10 +1,10 @@
 package com.urban.mobility.io.ui
 
 import android.os.Bundle
-import androidx.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.urban.mobility.io.R
 import kotlinx.android.synthetic.main.fragment_base.*
@@ -23,9 +23,9 @@ abstract class BaseFragment : Fragment() {
 
     abstract fun onViewReady(view: View, savedInstanceState: Bundle?)
 
-    fun getMainActivity(): MainActivity? =
-            if (activity is MainActivity) activity as MainActivity
-            else null
+//    fun getMainActivity(): MainActivity? =
+//            if (activity is MainActivity) activity as MainActivity
+//            else null
 
     @LayoutRes
     abstract fun getLayoutId(): Int

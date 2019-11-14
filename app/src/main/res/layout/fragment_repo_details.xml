@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/ic_octoface"
+            tools:srcCompat="@drawable/ic_placeholder"
             tools:ignore="UnusedAttribute" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
             app:layout_constraintBottom_toTopOf="@id/text_repo_title"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Mohsen" />
+            tools:text="Name" />
 
         <TextView
             android:id="@+id/text_repo_title"

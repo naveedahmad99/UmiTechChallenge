@@ -1,4 +1,4 @@
-package com.example.kyle.githubapi.login
+package com.urban.mobility.io.data.authtoken
 
 import com.google.gson.annotations.SerializedName
 

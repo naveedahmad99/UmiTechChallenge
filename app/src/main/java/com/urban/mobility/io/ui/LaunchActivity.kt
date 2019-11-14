@@ -31,7 +31,7 @@ class LaunchActivity : AppCompatActivity() {
         if (verifyAvailableNetwork(this)) {
             val intent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://github.com/login/oauth/authorize" + "?client_id=" + CLIENT_ID + "&scope=repo&redirect_uri=" + redirectUri)
+                Uri.parse("https://github.com/login/oauth/authorize?client_id=$CLIENT_ID&scope=repo&redirect_uri=$redirectUri")
             )
             startActivity(intent)
         } else

@@ -9,4 +9,5 @@ class TrendingReposRepositoryModule {
     @Provides
     fun provideTrendingReposRepository(repository: TrendingReposRepository):
             RepositoryContract.ITrendingReposRepository = repository
+
 }

@@ -1,10 +1,10 @@
 package com.urban.mobility.io.ui
 
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
 import com.urban.mobility.io.R
 import com.urban.mobility.io.ui.repo.RepoDetailsFragment
 import com.urban.mobility.io.ui.trendings.TrendingReposFragment

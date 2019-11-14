@@ -3,11 +3,7 @@
     <string name="prompt_written_in">Language</string>
     <string name="prompt_by">By</string>
     <string name="prefix_updated">Updated %1$s</string>
-    <string name="name">Name: </string>
 
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="login_with_github">Login with Github</string>
     <string name="no_internet">Problem Connecting to Internet</string>
 </resources>

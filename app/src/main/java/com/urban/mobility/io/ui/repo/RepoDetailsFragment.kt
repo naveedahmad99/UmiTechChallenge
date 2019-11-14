@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 class RepoDetailsFragment : BaseFragment() {
 
-    private val TAG = RepoDetailsFragment::class.java.simpleName
+    private val mTAG = RepoDetailsFragment::class.java.simpleName
     var repository: Repository? = null
 
     companion object {
@@ -63,7 +63,7 @@ class RepoDetailsFragment : BaseFragment() {
                     Error.SUCCESS -> {
                     }
                     else -> {
-                        Log.d(TAG, data.name)
+                        Log.d(mTAG, data.name)
                         SharedPreferenceHelper.setSharedPreferenceBoolean(
                             this.activity!!,
                             PREFS_LOGGED_IN, false
@@ -74,7 +74,7 @@ class RepoDetailsFragment : BaseFragment() {
                 }
             }
             is Repository -> {
-                Log.d(TAG, "Posted Message")
+                Log.d(mTAG, "Posted Message")
                 if (data.updatedAt != repository!!.updatedAt || data.stars != repository!!.stars || data.forks != repository!!.forks || data.repoDescription != repository!!.repoDescription) {
                     bindData((data))
                 }
@@ -96,8 +96,8 @@ class RepoDetailsFragment : BaseFragment() {
         Picasso
             .get()
             .load(Uri.parse(repo.owner.avatar))
-            .placeholder(R.drawable.ic_octoface)
-            .error(R.drawable.ic_octoface)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
             .centerCrop()
             .fit()
             .into(image_repo_owner)
@@ -124,9 +124,9 @@ class RepoDetailsFragment : BaseFragment() {
 
     override fun getLayoutId(): Int = R.layout.fragment_repo_details
 
-    val handler = object : Handler(Looper.getMainLooper()) {
+    private val handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
-            Log.d(TAG, "handle message")
+            Log.d(mTAG, "handle message")
             reposDetailVM.loadTrendingRepos(repository!!.owner.username, repository!!.name)
         }
     }

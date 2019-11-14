@@ -10,7 +10,7 @@ class ActionManager private constructor(){
         }
     }
 
-    val actionStack: Stack<Action> = Stack()
+    private val actionStack: Stack<Action> = Stack()
     var onActionListener: ((Action) -> Unit)? = null
 
     fun fire(action: Action) {

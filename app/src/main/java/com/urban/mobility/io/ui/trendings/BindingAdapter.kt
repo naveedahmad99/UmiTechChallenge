@@ -1,10 +1,10 @@
 package com.urban.mobility.io.ui.trendings
 
-import androidx.databinding.BindingAdapter
 import android.net.Uri
 import android.widget.ImageView
-import com.urban.mobility.io.R
+import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
+import com.urban.mobility.io.R
 
 object BindingAdapter {
 
@@ -14,8 +14,8 @@ object BindingAdapter {
         Picasso
                 .get()
                 .load(Uri.parse(url))
-                .placeholder(R.drawable.ic_octoface)
-                .error(R.drawable.ic_octoface)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
                 .centerCrop()
                 .fit()
                 .into(view)

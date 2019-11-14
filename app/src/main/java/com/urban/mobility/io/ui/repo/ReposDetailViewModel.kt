@@ -1,5 +1,6 @@
 package com.urban.mobility.io.ui.repo
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,7 @@ class ReposDetailViewModel(
         MutableLiveData<Repository>()
     }
 
+    @SuppressLint("CheckResult")
     fun loadTrendingRepos(ownerName: String, repoName: String) {
         repository
             .loadRepoDetail(ownerName, repoName)

@@ -1,6 +1,5 @@
-package com.example.kyle.githubapi.api
+package com.urban.mobility.io.data.authtoken
 
-import com.example.kyle.githubapi.login.AccessToken
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

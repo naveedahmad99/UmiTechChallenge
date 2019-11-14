@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@{repository.owner.avatar}"
-                tools:src="@drawable/ic_octoface" />
+                tools:src="@drawable/ic_placeholder" />
 
             <View
                 android:layout_width="0dp"

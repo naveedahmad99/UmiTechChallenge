@@ -2,6 +2,7 @@ package com.urban.mobility.io.ui.repo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,10 +17,13 @@ import com.squareup.picasso.Picasso
 import com.urban.mobility.io.R
 import com.urban.mobility.io.data.DATE_FORMAT
 import com.urban.mobility.io.data.KEY_DATA
+import com.urban.mobility.io.data.PREFS_LOGGED_IN
 import com.urban.mobility.io.data.REFRESH_TIME_IN_MILLISECONDS
 import com.urban.mobility.io.data.enums.Error
 import com.urban.mobility.io.domain.Repository
 import com.urban.mobility.io.ui.BaseFragment
+import com.urban.mobility.io.ui.LaunchActivity
+import com.urban.mobility.io.utils.SharedPreferenceHelper
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import java.text.SimpleDateFormat
@@ -60,6 +64,11 @@ class RepoDetailsFragment : BaseFragment() {
                     }
                     else -> {
                         Log.d(TAG, data.name)
+                        SharedPreferenceHelper.setSharedPreferenceBoolean(
+                            this.activity!!,
+                            PREFS_LOGGED_IN, false
+                        )
+                        startActivity(Intent(this.activity!!, LaunchActivity::class.java))
                         refreshData()
                     }
                 }
@@ -93,7 +102,7 @@ class RepoDetailsFragment : BaseFragment() {
             .fit()
             .into(image_repo_owner)
         text_repo_title.text = repo.name
-        text_author.text = "@${repo.owner.username}"
+        text_author.text = repo.owner.username
         text_repo_description.text = repo.repoDescription
         text_stars.text = repo.stars.toString()
         text_forks.text = repo.forks.toString()
@@ -106,7 +115,7 @@ class RepoDetailsFragment : BaseFragment() {
             context, updatedAt.time, DateUtils.SECOND_IN_MILLIS,
             DateUtils.YEAR_IN_MILLIS, 0
         )
-        text_updated_at.text = "${getString(R.string.prefix_updated)} $text"
+        text_updated_at.text = getString(R.string.prefix_updated, text)
     }
 
     private fun refreshData() {

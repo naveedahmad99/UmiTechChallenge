@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentTransaction
 import com.urban.mobility.io.R
 import com.urban.mobility.io.ui.repo.RepoDetailsFragment
 import com.urban.mobility.io.ui.trendings.TrendingReposFragment
+import com.urban.mobility.io.utils.showToast
+import com.urban.mobility.io.utils.verifyAvailableNetwork
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -37,11 +39,17 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     }
 
     private fun fireAction(action: Action) {
-        when (action.type) {
-            ActionType.UNKNOWN -> Log.w(javaClass.simpleName, "Unknown Action Fired!")
-            ActionType.ACTION_TRENDING_REPOS -> transition(TrendingReposFragment.newInstance(), replace = false)
-            ActionType.ACTION_REPO -> transition(RepoDetailsFragment.newInstance(action.data))
-        }
+        if (verifyAvailableNetwork(this)) {
+            when (action.type) {
+                ActionType.UNKNOWN -> Log.w(javaClass.simpleName, "Unknown Action Fired!")
+                ActionType.ACTION_TRENDING_REPOS -> transition(
+                    TrendingReposFragment.newInstance(),
+                    replace = false
+                )
+                ActionType.ACTION_REPO -> transition(RepoDetailsFragment.newInstance(action.data))
+            }
+        } else
+            showToast(this, getString(R.string.no_internet))
     }
 
     private fun transition(fragment: BaseFragment, keepCurrent: Boolean = true,

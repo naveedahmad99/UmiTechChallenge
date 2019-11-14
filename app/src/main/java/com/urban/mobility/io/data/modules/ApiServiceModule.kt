@@ -2,10 +2,13 @@ package com.urban.mobility.io.data.modules
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.urban.mobility.io.data.ACCESS_TOKEN
 import com.urban.mobility.io.data.NAMED_REST_API_URL
+import com.urban.mobility.io.data.TOKEN_TYPE
 import com.urban.mobility.io.data.interfaces.GithubWebservice
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
@@ -49,6 +52,7 @@ class ApiServiceModule {
     @Singleton
     fun provideOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder()
+            .addInterceptor(OAuthInterceptor(TOKEN_TYPE, ACCESS_TOKEN))
         clientBuilder.addInterceptor(interceptor)
         return clientBuilder.build()
     }
@@ -71,5 +75,16 @@ class ApiServiceModule {
     @Singleton
     fun provideRxJavaCallAdapterFactory(): CallAdapter.Factory {
         return RxJava2CallAdapterFactory.create()
+    }
+}
+
+class OAuthInterceptor(private val tokenType: String, private val acceessToken: String) :
+    Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        var request = chain.request()
+        request = request.newBuilder().header("Authorization", "$tokenType $acceessToken").build()
+
+        return chain.proceed(request)
     }
 }

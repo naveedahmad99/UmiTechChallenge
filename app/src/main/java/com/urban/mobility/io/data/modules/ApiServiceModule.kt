@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
+
 @Module
 class ApiServiceModule {
 
@@ -47,7 +48,9 @@ class ApiServiceModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(interceptor).build()
+        val clientBuilder = OkHttpClient.Builder()
+        clientBuilder.addInterceptor(interceptor)
+        return clientBuilder.build()
     }
 
     @Provides

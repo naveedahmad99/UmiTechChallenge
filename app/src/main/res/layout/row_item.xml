@@ -25,6 +25,31 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp">
 
+            <ImageView
+                android:id="@+id/image_repo_owner"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/foreground_repo_owner_avatar"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="3:2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@{repository.owner.avatar}"
+                tools:src="@drawable/ic_octoface" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/foreground_repo_owner_avatar"
+                android:contentDescription="@null"
+                app:layout_constraintDimensionRatio="3:2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
             <TextView
                 android:id="@+id/text_repo_title"
                 android:layout_width="wrap_content"
@@ -33,7 +58,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@{repository.name}"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +75,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@{repository.repoDescription}"
-                android:textColor="@color/grey_600"
+                android:textColor="@android:color/white"
                 android:textSize="14sp"
                 android:visibility="@{(repository.repoDescription.length() == 0) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -58,28 +83,16 @@
                 app:layout_constraintTop_toBottomOf="@id/text_repo_title"
                 tools:text="Some description" />
 
-            <ImageView
-                android:id="@+id/image_repo_owner"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/background_repo_owner_avatar"
-                android:contentDescription="@null"
-                android:src="@{repository.owner.avatar}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_repo_description" />
-
             <TextView
                 android:id="@+id/text_author_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="@string/prompt_by"
+                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toTopOf="@id/text_written_in_title"
-                app:layout_constraintStart_toEndOf="@id/image_repo_owner" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/text_author"
@@ -88,27 +101,30 @@
                 android:layout_marginStart="4dp"
                 android:text="@{'@' + repository.owner.username}"
                 android:textStyle="bold"
+                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="@id/text_author_title"
-                app:layout_constraintStart_toEndOf="@id/text_author_title"
+                app:layout_constraintStart_toEndOf="@+id/text_author_title"
                 app:layout_constraintTop_toTopOf="@id/text_author_title"
-                app:layout_goneMarginStart="4dp" />
+                app:layout_goneMarginStart="8dp" />
 
             <TextView
                 android:id="@+id/text_written_in_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@android:color/white"
                 android:text="@string/prompt_written_in"
                 android:visibility="@{(repository.language.length() == 0) ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image_repo_owner" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/text_written_in"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:textColor="@android:color/white"
                 android:text="@{repository.language}"
                 android:textStyle="bold"
                 android:visibility="@{(repository.language.length() == 0) ? View.GONE : View.VISIBLE}"
@@ -133,6 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
+                android:textColor="@android:color/white"
                 android:fontFamily="sans-serif-condensed"
                 android:text="@{String.valueOf(repository.stars)}"
                 app:layout_constraintBottom_toBottomOf="@id/img_star"

@@ -2,10 +2,13 @@ package com.urban.mobility.io.data.modules
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.urban.mobility.io.data.ACCESS_TOKEN
 import com.urban.mobility.io.data.NAMED_REST_API_URL
+import com.urban.mobility.io.data.TOKEN_TYPE
 import com.urban.mobility.io.data.interfaces.GithubWebservice
 import dagger.Module
 import dagger.Provides
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.CallAdapter
@@ -15,6 +18,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
+
 
 @Module
 class ApiServiceModule {
@@ -47,7 +51,10 @@ class ApiServiceModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor(interceptor).build()
+        val clientBuilder = OkHttpClient.Builder()
+            .addInterceptor(OAuthInterceptor(TOKEN_TYPE, ACCESS_TOKEN))
+        clientBuilder.addInterceptor(interceptor)
+        return clientBuilder.build()
     }
 
     @Provides
@@ -68,5 +75,16 @@ class ApiServiceModule {
     @Singleton
     fun provideRxJavaCallAdapterFactory(): CallAdapter.Factory {
         return RxJava2CallAdapterFactory.create()
+    }
+}
+
+class OAuthInterceptor(private val tokenType: String, private val acceessToken: String) :
+    Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        var request = chain.request()
+        request = request.newBuilder().header("Authorization", "$tokenType $acceessToken").build()
+
+        return chain.proceed(request)
     }
 }
